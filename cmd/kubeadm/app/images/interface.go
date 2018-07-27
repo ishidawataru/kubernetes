@@ -73,6 +73,9 @@ func NewCRInterfacer(execer utilsexec.Interface, criSocket string) (*CRInterface
 
 // Pull pulls the actual image using either crictl or docker
 func (cri *CRInterfacer) Pull(image string) error {
+	if err := cri.Exists(image); err == nil {
+		return nil
+	}
 	if cri.criSocket != kubeadmapiv1alpha2.DefaultCRISocket {
 		return cri.exec.Command(cri.crictlPath, "-r", cri.criSocket, "pull", image).Run()
 	}
